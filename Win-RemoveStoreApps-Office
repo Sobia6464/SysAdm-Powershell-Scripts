@@ -1,0 +1,6 @@
+
+Get-AppxProvisionedPackage -Online | where-object{$_.Displayname -like "*Microsoft.MicrosoftOfficeHub*"} | Remove-AppxProvisionedPackage -Online
+Get-AppxProvisionedPackage -Online | where-object{$_.Displayname -like "*Microsoft.Office.Desktop.*"} | Remove-AppxProvisionedPackage -Online
+Get-AppxProvisionedPackage -Online | where-object{$_.Displayname -like "*Microsoft.Office.OneNote*"} | Remove-AppxProvisionedPackage -Online
+Get-AppxProvisionedPackage -Online | where-object{$_.Displayname -like "*Microsoft.Office.Sway*"} | Remove-AppxProvisionedPackage -Online
+Get-AppxProvisionedPackage -Online | where-object{$_.Displayname -like "*Microsoft.Office.Sway*"} | Remove-AppxProvisionedPackage -Online
