@@ -1,0 +1,3 @@
+$excludedApps = '.*photos.*|.*calculator.*|.*alarms.*|.*minecraft.*|.*soundrecorder.*|.*zunevideo.*|.*camera.*|.*xbox.*|.*store.*|.*extension.*|.*screensketch.*|.*mspaint.*'
+$unwantedApps = Get-AppxPackage -PackageTypeFilter Bundle | Where-Object {$_.Name -notmatch $excludedApps} 
+If ($unwantedApps) {$unwantedApps | Remove-AppxPackage}
