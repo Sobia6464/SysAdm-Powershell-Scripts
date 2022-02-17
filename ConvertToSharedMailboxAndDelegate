@@ -1,0 +1,13 @@
+#Convert Mailbox to Shared
+
+Set-Mailbox "MAILBOX@IDENTITY.COM" -Type Shared
+
+#Check that the type is SharedMailbox
+#This an sometimes take a minute
+
+Get-Mailbox -Identity "MAILBOX@IDENTITY.COM" | Format-Table Name, RecipientTypeDetails
+
+#Delegate Permissions
+#You can do this multiple times for multiple delegations
+
+Add-MailboxPermission -Identity "MAILBOX@IDENTITY.COM" -User "USERWHO@GETSACCESS.COM" -AccessRights FullAccess -InheritanceType All
