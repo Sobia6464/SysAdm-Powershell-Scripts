@@ -40,7 +40,7 @@
  Connect-Msolservice -Credential $Credential
  $NewUserFirstName = Read-Host 'What is the New Users FIRST name? Example: John'
  $NewUserLastName = Read-Host 'What is the New Users LAST name? Example: Doe'
- $EmailDomain = Read-Host 'What is the email domain? Exmaple: contoso.com"
+ $EmailDomain = Read-Host 'What is the email domain? Exmaple: contoso.com'
  $NewEmail = Read-Host 'What is the email alias specified by the client? DO NOT include domain name. jdoe NOT jdoe@nodomain.com'
  $NewEmailPassword = Read-Host 'What is the password specified by the client for email?' -AsSecureString
  New-Mailbox -Alias $NewEmail -Name $NewUserName -FirstName $NewUserFirstName -LastName $NewUserLastName -DisplayName "$NewUserFirstName $NewUserLastName" -MicrosoftOnlineServicesID $NewEmail@#EmailDomain -Password $NewEmailPassword
