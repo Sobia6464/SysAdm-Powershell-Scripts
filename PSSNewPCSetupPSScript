@@ -1,18 +1,53 @@
- #configure account
+ ##Configure Account
  
  $pass = Read-Host 'What is the password for the nexigen user?' -AsSecureString
  net user nexigen $pass /add
  net localgroup administrators nexigen /add
  
- #Rename PC
+ ##Rename PC
  
  $SerialNumber = (Get-WmiObject -class win32_bios).SerialNumber
  $computer = "PS-$SerialNumber"
  Rename-Computer -NewName $computer -Force
  
- #Remove Local Users other than Nexigen and Administrator
+ ##Remove Local Users other than Nexigen and Administrator
  
  $OldUsers = (Get-wmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Where-Object {$_.name -notlike "*nexigen*"} | Where-Object {$_.name -notlike "*Administrator*"} | Select-Object Name).Name
  Remove-LocalUser -Name "$OldUsers"
  
+ ##Add New User
+ 
+ $NewUserName = Read-Host 'What is the new users username? Should be FirstinitialLastname like JDoe for John Doe.'
+ $NewUserPass = Read-Host 'What is the password for the new user?' -AsSecureString
+ net user $NewUserName $NewUserPass /add
+ net localgroup administrators $NewUserName /add
+ 
+ ##Setup O365 Account
+ 
+ ###Connect to O365 Instance
+ $Credential = Get-Credential
+ $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection
+ Import-PSSession $Session
+ 
+ ###Create Mailbox
+ Connect-Msolservice
+ ####The above will prompt for Clients O365 Admin Credentials
+ 
+ $NewUserFirstName = Read-Host 'What is the New Users FIRST name? Example: John'
+ $NewUserLastName = Read-Host 'What is the New Users LAST name? Example: Doe'
+ $EmailDomain = Read-Host 'What is the email domain? Exmaple: contoso.com"
+ $NewEmail = Read-Host 'What is the email alias specified by the client? DO NOT include domain name. jdoe NOT jdoe@nodomain.com'
+ $NewEmailPassword = Read-Host 'What is the password specified by the client for email?' -AsSecureString
+ New-Mailbox -Alias $NewEmail -Name $NewUserName -FirstName $NewUserFirstName -LastName $NewUserLastName -DisplayName "$NewUserFirstName $NewUserLastName" -MicrosoftOnlineServicesID $NewEmail@#EmailDomain -Password $NewEmailPassword
+ Set-MsolUserLicense -UserPrincipalName "$NewEmail@$EmailDomain" -AddLicenses O365_BUSINESS_PREMIUM
+ 
+ Remove-PSSession $Session
+ 
+ ##Install Office365 Apps
+ 
+ $FolderName = (Get-Date).tostring("dd-MM-yyyy")
+ New-Item -itemType Directory -Name $FolderName
+ cd $FolderName
+ wget "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_14729-20228.exe" -outfile "OfficeDeployment.exe"
+ .\officedeploymenttool_14729-20228.exe /extract:Office /quiet
  
