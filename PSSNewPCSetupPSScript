@@ -1,3 +1,10 @@
+ ###This will NOT Install Egnyte
+ ###You need the configuration.xml file for the client
+ ###Will need to be placed in the c:\temp folder
+ ###After Script Runs you will need to login as the user, unpin the stupid icons from the taskbar, and login to their outlook
+ ###Make sure office is activated and outlook is pinned
+ 
+ 
  ##Configure Account
  
  $pass = Read-Host 'What is the password for the nexigen user?' -AsSecureString
@@ -50,4 +57,15 @@
  cd $FolderName
  wget "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_14729-20228.exe" -outfile "OfficeDeployment.exe"
  .\officedeploymenttool_14729-20228.exe /extract:Office /quiet
+ 
+ ###NEED TO AUTOMATE GETTING THE CONFIGURATION FILE###
+ 
+ setup.exe /configure "C:\temp\configuration.xml"
+ 
+ ##Uninstall Garbage
+ 
+ $excludedApps = '.*photos.*|.*calculator.*|.*alarms.*|.*minecraft.*|.*soundrecorder.*|.*zunevideo.*|.*camera.*|.*xbox.*|.*store.*|.*extension.*|.*screensketch.*|.*mspaint.*'
+$unwantedApps = Get-AppxPackage -PackageTypeFilter Bundle | Where-Object {$_.Name -notmatch $excludedApps} 
+If ($unwantedApps) {$unwantedApps | Remove-AppxPackage}
+
  
