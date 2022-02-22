@@ -1,6 +1,7 @@
  ###This will NOT Install Egnyte
  ###You need the configuration.xml file for the client
  ###Will need to be placed in the c:\temp folder
+ ###The Client Will Need an Available Office365 Business Premium License
  ###After Script Runs you will need to login as the user, unpin the stupid icons from the taskbar, and login to their outlook
  ###Make sure office is activated and outlook is pinned
  
