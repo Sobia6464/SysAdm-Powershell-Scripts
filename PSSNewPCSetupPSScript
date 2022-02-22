@@ -8,9 +8,10 @@
  
  ##Configure Account
  
- $pass = Read-Host 'What is the password for the nexigen user?' -AsSecureString
- net user nexigen $pass /add
- net localgroup administrators nexigen /add
+ $LocalAdmin = Read-Host 'What is the username for the local admin account?'
+ $pass = Read-Host "What is the password for the $LocalAdmin user?" -AsSecureString
+ net user $LocalAdmin $pass /add
+ net localgroup administrators $LocalAdmin /add
  
  ##Rename PC
  
@@ -18,9 +19,9 @@
  $computer = "PS-$SerialNumber"
  Rename-Computer -NewName $computer -Force
  
- ##Remove Local Users other than Nexigen and Administrator
+ ##Remove Local Users other than Local Admin and Administrator
  
- $OldUsers = (Get-wmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Where-Object {$_.name -notlike "*nexigen*"} | Where-Object {$_.name -notlike "*Administrator*"} | Select-Object Name).Name
+ $OldUsers = (Get-wmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Where-Object {$_.name -notlike "*$LocalAdmin*"} | Where-Object {$_.name -notlike "*Administrator*"} | Select-Object Name).Name
  Remove-LocalUser -Name "$OldUsers"
  
  ##Add New User
