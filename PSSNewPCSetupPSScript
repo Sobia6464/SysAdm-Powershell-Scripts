@@ -59,6 +59,8 @@
  ###NEED TO AUTOMATE GETTING THE CONFIGURATION FILE###
  
  setup.exe /configure "C:\temp\configuration.xml"
+ cd ..\
+ Remove-Item $FolderName -Force -Recurse
  
  ##Uninstall Garbage
  
