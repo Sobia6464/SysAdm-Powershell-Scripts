@@ -37,9 +37,7 @@
  Import-PSSession $Session
  
  ###Create Mailbox
- Connect-Msolservice
- ####The above will prompt for Clients O365 Admin Credentials
- 
+ Connect-Msolservice -Credential $Credential
  $NewUserFirstName = Read-Host 'What is the New Users FIRST name? Example: John'
  $NewUserLastName = Read-Host 'What is the New Users LAST name? Example: Doe'
  $EmailDomain = Read-Host 'What is the email domain? Exmaple: contoso.com"
