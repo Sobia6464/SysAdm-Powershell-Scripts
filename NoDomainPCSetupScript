@@ -1,0 +1,71 @@
+###This will NOT Install Egnyte
+ ###You need the configuration.xml file for the client
+ ###Will need to be placed in the c:\temp folder
+ ###The Client Will Need an Available Office365 Business Premium License
+ ###After Script Runs you will need to login as the user, unpin the stupid icons from the taskbar, and login to their outlook
+ ###Make sure office is activated and outlook is pinned
+ 
+ 
+ ##Configure Account
+ 
+ $LocalAdmin = Read-Host 'What is the username for the local admin account?'
+ $pass = Read-Host "What is the password for the $LocalAdmin user?" -AsSecureString
+ net user $LocalAdmin $pass /add
+ net localgroup administrators $LocalAdmin /add
+ 
+ ##Rename PC
+ 
+ $SerialNumber = (Get-WmiObject -class win32_bios).SerialNumber
+ $computer = "PS-$SerialNumber"
+ Rename-Computer -NewName $computer -Force
+ 
+ ##Remove Local Users other than Local Admin and Administrator
+ 
+ $OldUsers = (Get-wmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Where-Object {$_.name -notlike "*$LocalAdmin*"} | Where-Object {$_.name -notlike "*Administrator*"} | Select-Object Name).Name
+ Remove-LocalUser -Name "$OldUsers"
+ 
+ ##Add New User
+ 
+ $NewUserName = Read-Host 'What is the new users username? Should be FirstinitialLastname like JDoe for John Doe.'
+ $NewUserPass = Read-Host 'What is the password for the new user?' -AsSecureString
+ net user $NewUserName $NewUserPass /add
+ net localgroup administrators $NewUserName /add
+ 
+ ##Setup O365 Account
+ 
+ ###Connect to O365 Instance
+ $Credential = Get-Credential
+ $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection
+ Import-PSSession $Session
+ 
+ ###Create Mailbox
+ Connect-Msolservice -Credential $Credential
+ $NewUserFirstName = Read-Host 'What is the New Users FIRST name? Example: John'
+ $NewUserLastName = Read-Host 'What is the New Users LAST name? Example: Doe'
+ $EmailDomain = Read-Host 'What is the email domain? Exmaple: contoso.com'
+ $NewEmail = Read-Host 'What is the email alias specified by the client? DO NOT include domain name. jdoe NOT jdoe@nodomain.com'
+ $NewEmailPassword = Read-Host 'What is the password specified by the client for email?' -AsSecureString
+ New-Mailbox -Alias $NewEmail -Name $NewUserName -FirstName $NewUserFirstName -LastName $NewUserLastName -DisplayName "$NewUserFirstName $NewUserLastName" -MicrosoftOnlineServicesID $NewEmail@#EmailDomain -Password $NewEmailPassword
+ Set-MsolUserLicense -UserPrincipalName "$NewEmail@$EmailDomain" -AddLicenses O365_BUSINESS_PREMIUM
+ 
+ Remove-PSSession $Session
+ 
+ ##Install Office365 Apps
+ 
+ $FolderName = (Get-Date).tostring("dd-MM-yyyy")
+ New-Item -itemType Directory -Name $FolderName
+ cd $FolderName
+ wget "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_14729-20228.exe" -outfile "OfficeDeployment.exe"
+ .\officedeploymenttool_14729-20228.exe /extract:Office /quiet
+ 
+ ###NEED TO AUTOMATE GETTING THE CONFIGURATION FILE###
+ 
+ setup.exe /configure "C:\temp\configuration.xml"
+ cd ..\
+ Remove-Item $FolderName -Force -Recurse
+ 
+ ##Uninstall Garbage
+ 
+ $excludedApps = '.*photos.*|.*calculator.*|.*alarms.*|.*minecraft.*|.*soundrecorder.*|.*zunevideo.*|.*camera.*|.*xbox.*|.*store.*|.*extension.*|.*screensketch.*|.*mspaint.*'
+$unwantedApps = Get-AppxPackage -PackageTypeFilter Bundle | Where-Object {$_.Name -notmatch $excludedApps} 
+If ($unwantedApps) {$unwantedApps | Remove-AppxPackage}
