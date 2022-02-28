@@ -12,4 +12,14 @@ Import-PSSession $Session
 
  
 
-when done WITH ALL WORK DO NOT FORGET TO RUN THIS BEFORE CLOSING POWERSHELL:   Remove-PSSession $Session 
+#when done WITH ALL WORK DO NOT FORGET TO RUN THIS BEFORE CLOSING POWERSHELL
+Remove-PSSession $Session 
+
+
+#OR
+
+Connect-ExchangeOnline -UserPrincipalName navin@contoso.onmicrosoft.com
+
+#When done
+
+Disconnect-ExchangeOnline
