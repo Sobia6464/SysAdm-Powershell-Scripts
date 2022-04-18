@@ -1,25 +1,24 @@
-$Credential = Get-Credential 
+ $Credential = Get-Credential 
 
  
 
-$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection 
+ $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection 
 
  
 
-Import-PSSession $Session 
-
-  
-
- 
+ Import-PSSession $Session 
+   
 
 ###when done WITH ALL WORK DO NOT FORGET TO RUN THIS BEFORE CLOSING POWERSHELL
-Remove-PSSession $Session 
+ Remove-PSSession $Session 
+
+
 
 
 ##AND/OR
 
-Connect-ExchangeOnline -UserPrincipalName navin@contoso.onmicrosoft.com
+ Connect-ExchangeOnline -UserPrincipalName navin@contoso.onmicrosoft.com
 
-#When done
+###When done
 
-Disconnect-ExchangeOnline
+ Disconnect-ExchangeOnline
