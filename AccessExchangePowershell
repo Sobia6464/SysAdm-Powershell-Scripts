@@ -18,6 +18,8 @@
 ##AND/OR
 
  Connect-ExchangeOnline -UserPrincipalName navin@contoso.onmicrosoft.com
+ 
+ Connect-MsolService
 
 ###When done
 
