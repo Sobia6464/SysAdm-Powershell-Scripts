@@ -1,0 +1,13 @@
+##View last directory sync time
+
+   Get-MsolCompanyInformation | select lastdirsynctime
+ 
+##Reset User Mailbox password
+###This is a temp password. It will force them to change the password on next login
+
+    Set-MsolUserPassword -UserPrincipalName "[email@domain.com]" -NewPassword "[NewPassword]"
+
+##Get Last Logon time and Item Count as well as storage limit status
+
+    Get-MailboxStatistics -Identity [useridentity]
+ 
