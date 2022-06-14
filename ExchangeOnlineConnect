@@ -1,0 +1,56 @@
+#ExecutionPolicy needs set to Unrestricted OR RemoteSigned to run
+#To do this run the following command in an elevated powershell
+#Set-ExecutionPolicy RemoteSigned
+
+
+if ((Get-Module -ListAvailable -Name PowerShellGet) -eq $null)
+{
+  Write-Host "PowerShellGet Module is required, do you want to install it?" -ForegroundColor Yellow
+      
+  $install = Read-Host Do you want to install module? [Y] Yes [N] No 
+  if($install -match "[yY]") 
+  { 
+    Write-Host "Installing PowerShellGet module" -ForegroundColor Cyan
+    Install-Module PowerShellGet -Force
+  } 
+  else
+  {
+    Write-Error "Please install PowerShellGet module."
+  }
+}
+if ((Get-Module -ListAvailable -Name MSOnline) -eq $null)
+{
+  Write-Host "MSOnline Module is required, do you want to install it?" -ForegroundColor Yellow
+      
+  $install = Read-Host Do you want to install module? [Y] Yes [N] No 
+  if($install -match "[yY]") 
+  { 
+    Write-Host "Installing MSOnline module" -ForegroundColor Cyan
+    Install-Module MSOnline -Repository PSGallery -AllowClobber -Force
+  } 
+  else
+  {
+    Write-Error "Please install MSOnline module."
+  }
+}
+if ((Get-Module -ListAvailable -Name ExchangeOnlineManagement) -eq $null)
+{
+  Write-Host "ExchangeOnlineManagement Module is required, do you want to install it?" -ForegroundColor Yellow
+      
+  $install = Read-Host Do you want to install module? [Y] Yes [N] No 
+  if($install -match "[yY]") 
+  { 
+    Write-Host "Installing ExchangeOnlineManagement module" -ForegroundColor Cyan
+    Install-Module -Name ExchangeOnlineManagement -Force
+  } 
+  else
+  {
+    Write-Error "Please install ExchangeOnlineManagement module."
+  }
+}
+$Global:Credential = Get-Credential
+$Global:Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection 
+Import-Module (Import-PSSession $Session -AllowClobber) -Global
+Connect-ExchangeOnline -Credential $Credential
+Connect-MsolService -Credential $Credential
+Set-Location -Path "ConnectedExchange\"
