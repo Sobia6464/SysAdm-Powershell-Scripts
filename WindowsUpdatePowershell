@@ -1,0 +1,10 @@
+# powershell WindowsUpdate
+powershell -executionpolicy bypass -noprofile
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+If (!(Get-PackageProvider -ListAvailable -Name NuGet)) {Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force}
+If (!(Get-PackageProvider -ListAvailable -Name PowershellGet)) {Install-PackageProvider -Name PowershellGet -Force}
+If (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force}
+Import-Module PSWindowsUpdate
+Add-WUServiceManager -ServiceID "7971f918-a847-4430-9279-4a52d1efe18d" -AddServiceFlag 7 -Confirm:$false
+Get-WindowsUpdate
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
